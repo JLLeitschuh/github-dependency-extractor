@@ -107,15 +107,13 @@ abstract class BaseExtractorTest extends Specification {
         String cleanedAbsolutePath = pluginJar.absolutePath.replace('\\',  '/')
         assert (pluginJar.exists())
         file("init.gradle") << """
-        import org.gradle.github.dependency.extractor.GithubDependencyExtractorPlugin
-        import org.gradle.github.dependency.extractor.ForceDependencyResolutionPlugin
+        import org.gradle.github.dependency.GitHubDependencySubmissionPlugin
         initscript {
             dependencies {
                 classpath files('${cleanedAbsolutePath}')
             }
         }
-        apply plugin: GithubDependencyExtractorPlugin
-        apply plugin: ForceDependencyResolutionPlugin
+        apply plugin: GitHubDependencySubmissionPlugin
         """.stripMargin()
         args("--init-script", "init.gradle")
     }
