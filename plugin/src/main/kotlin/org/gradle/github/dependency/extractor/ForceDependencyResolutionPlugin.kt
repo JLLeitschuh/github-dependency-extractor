@@ -18,6 +18,9 @@ class ForceDependencyResolutionPlugin : Plugin<Gradle> {
             gradle.includedBuilds.forEach {
                 resolveAllDeps.dependsOn(it.task(":dependencyExtractor_resolveBuildDependencies"))
             }
+
+            // Set the default task
+            gradle.rootProject.defaultTasks = listOf("dependencyExtractor_resolveBuildDependencies")
         }
     }
 }

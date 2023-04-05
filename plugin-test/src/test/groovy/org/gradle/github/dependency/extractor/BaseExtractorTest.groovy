@@ -97,7 +97,7 @@ abstract class BaseExtractorTest extends Specification {
     }
 
     protected BuildResult run() {
-        result = getExecuter().withTasks(":dependencyExtractor_resolveBuildDependencies").run()
+        result = getExecuter().run()
         return result
     }
 
