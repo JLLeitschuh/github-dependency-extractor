@@ -17,7 +17,6 @@ import org.gradle.test.fixtures.file.TestNameTestDirectoryProvider
 import org.gradle.test.fixtures.maven.MavenFileRepository
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.intellij.lang.annotations.Language
 import org.junit.Rule
 import spock.lang.Specification
 
@@ -97,13 +96,8 @@ abstract class BaseExtractorTest extends Specification {
         getExecuter().withArgument("-d")
     }
 
-    protected BuildResult succeeds(String... tasks) {
-        result = getExecuter().withTasks(*tasks).run()
-        return result
-    }
-
-    protected BuildResult fails(String... tasks) {
-        result = getExecuter().withTasks(*tasks).runWithFailure()
+    protected BuildResult run() {
+        result = getExecuter().withTasks(":dependencyExtractor_resolveBuildDependencies").run()
         return result
     }
 
@@ -114,12 +108,14 @@ abstract class BaseExtractorTest extends Specification {
         assert (pluginJar.exists())
         file("init.gradle") << """
         import org.gradle.github.dependency.extractor.GithubDependencyExtractorPlugin
+        import org.gradle.github.dependency.extractor.ForceDependencyResolutionPlugin
         initscript {
             dependencies {
                 classpath files('${cleanedAbsolutePath}')
             }
         }
         apply plugin: GithubDependencyExtractorPlugin
+        apply plugin: ForceDependencyResolutionPlugin
         """.stripMargin()
         args("--init-script", "init.gradle")
     }

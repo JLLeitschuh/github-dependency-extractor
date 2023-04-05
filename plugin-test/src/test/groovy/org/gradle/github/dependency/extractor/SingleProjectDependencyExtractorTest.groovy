@@ -46,7 +46,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -65,31 +65,6 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
     }
 
-    def "build with dependency compiled & built"() {
-        given:
-        def foo = mavenRepo.module("org.test", "foo", "1.0").publish()
-        singleProjectBuildWithDependencies """
-        dependencies {
-            implementation "org.test:foo:1.0"
-        }
-        """
-        when:
-        succeeds("build")
-
-        then:
-        def manifest = jsonManifest("project :")
-        verifyAll {
-            (manifest.file as Map).source_location == "build.gradle"
-            def resolved = manifest.resolved as Map
-            resolved.keySet() == ["org.test:foo:1.0"] as Set
-            verifyAll(resolved["org.test:foo:1.0"] as Map) {
-                package_url == purlFor(foo)
-                relationship == "direct"
-                dependencies == []
-            }
-        }
-    }
-
     def "build with two dependencies"() {
         given:
         def foo = mavenRepo.module("org.test", "foo", "1.0").publish()
@@ -101,7 +76,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -130,7 +105,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -164,7 +139,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -189,17 +164,15 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         def bar11 = mavenRepo.module("org.test", "bar", "1.1").publish()
         def foo = mavenRepo.module("org.test", "foo", "1.0").dependsOn(bar10).publish()
         singleProjectBuildWithDependencies """
-        configurations {
-            runtimeClasspath {
-                resolutionStrategy.force("org.test:bar:1.1")
-            }
+        configurations.all {
+            resolutionStrategy.force("org.test:bar:1.1")
         }
         dependencies {
             implementation "org.test:foo:1.0"
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -231,7 +204,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         public class Test {}
         """
         when:
-        succeeds("build")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -262,7 +235,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -295,7 +268,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -325,7 +298,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -360,7 +333,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
@@ -393,7 +366,7 @@ class SingleProjectDependencyExtractorTest extends BaseExtractorTest {
         }
         """
         when:
-        succeeds("dependencies", "--configuration", "runtimeClasspath")
+        run()
 
         then:
         def manifest = jsonManifest("project :")
